@@ -7,6 +7,8 @@
 
 using namespace std;
 
+int var_temp_qnt;
+
 struct atributos
 {
 	string label;
@@ -48,13 +50,22 @@ COMANDO 	: E ';'
 
 E 			: E '+' E
 			{
-				$$.traducao = $1.traducao + $3.traducao + "\ta = b + c;\n";
+				$$.label = "t" + std::to_string(var_temp_qnt);
+				$$.traducao = $1.traducao + $3.traducao + 
+					"\t" + $$.label + " = " + $1.label + " + " + $3.label + ";\n";
 			}
 			| TK_NUM
 			{
-				$$.traducao = "\ta = " + $1.traducao + ";\n";
+				var_temp_qnt++;
+				$$.label = "t" + std::to_string(var_temp_qnt);
+				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
 			}
 			| TK_ID
+			{
+				var_temp_qnt++;
+				$$.label = "t" + std::to_string(var_temp_qnt);
+				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
+			}
 			;
 
 %%
@@ -65,6 +76,8 @@ int yyparse();
 
 int main( int argc, char* argv[] )
 {
+	var_temp_qnt = 0;
+
 	yyparse();
 
 	return 0;
