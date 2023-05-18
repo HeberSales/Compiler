@@ -50,6 +50,7 @@ COMANDO 	: E ';'
 
 E 			: E '+' E
 			{
+				var_temp_qnt++;
 				$$.label = "t" + std::to_string(var_temp_qnt);
 				$$.traducao = $1.traducao + $3.traducao + 
 					"\t" + $$.label + " = " + $1.label + " + " + $3.label + ";\n";

@@ -1336,7 +1336,7 @@ yyreduce:
   case 7:
 #line 52 "sintatica.y"
                         {
-				yyval.label = "t" + var_temp_qnt;
+				yyval.label = "t" + std::to_string(var_temp_qnt);
 				yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + 
 					"\t" + yyval.label + " = " + yyvsp[-2].label + " + " + yyvsp[0].label + ";\n";
 			}
@@ -1347,7 +1347,7 @@ yyreduce:
 #line 58 "sintatica.y"
                         {
 				var_temp_qnt++;
-				yyval.label = "t" + var_temp_qnt;
+				yyval.label = "t" + std::to_string(var_temp_qnt);
 				yyval.traducao = "\t" + yyval.label + " = " + yyvsp[0].label + ";\n";
 			}
 #line 1354 "y.tab.c"
@@ -1357,7 +1357,7 @@ yyreduce:
 #line 64 "sintatica.y"
                         {
 				var_temp_qnt++;
-				yyval.label = "t" + var_temp_qnt;
+				yyval.label = "t" + std::to_string(var_temp_qnt);
 				yyval.traducao = "\t" + yyval.label + " = " + yyvsp[0].label + ";\n";
 			}
 #line 1364 "y.tab.c"
