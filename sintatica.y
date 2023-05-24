@@ -22,7 +22,7 @@ string generator_temp_code();
 
 %token TK_NUM
 %token TK_MAIN TK_ID TK_TIPO_INT
-%token TK_FIM TK_ERROR
+%token TK_FIM TK_ERROR 
 
 %start S
 
@@ -68,6 +68,10 @@ E 			: E '+' E
 				$$.label = generator_temp_code();
 				$$.traducao = $1.traducao + $3.traducao + 
 					"\t" + $$.label + " = " + $1.label + " - " + $3.label + ";\n";
+			}
+			| TK_ID '=' E 
+			{
+				$$.traducao = $1.traducao + $3.traducao + "\t" + $1.label + " = " + $3.label + ";\n";
 			}
 			| TK_NUM
 			{
