@@ -17,6 +17,7 @@ struct atributos
 
 int yylex(void);
 void yyerror(string);
+string generator_temp_code();
 %}
 
 %token TK_NUM
@@ -26,6 +27,7 @@ void yyerror(string);
 %start S
 
 %left '+'
+%left '-'
 
 %%
 
@@ -50,21 +52,25 @@ COMANDO 	: E ';'
 
 E 			: E '+' E
 			{
-				var_temp_qnt++;
-				$$.label = "t" + std::to_string(var_temp_qnt);
+				$$.label = generator_temp_code();
 				$$.traducao = $1.traducao + $3.traducao + 
 					"\t" + $$.label + " = " + $1.label + " + " + $3.label + ";\n";
 			}
+			|
+			E '-' E
+			{
+				$$.label = generator_temp_code();
+				$$.traducao = $1.traducao + $3.traducao + 
+					"\t" + $$.label + " = " + $1.label + " - " + $3.label + ";\n";
+			}
 			| TK_NUM
 			{
-				var_temp_qnt++;
-				$$.label = "t" + std::to_string(var_temp_qnt);
+				$$.label = generator_temp_code();
 				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
 			}
 			| TK_ID
 			{
-				var_temp_qnt++;
-				$$.label = "t" + std::to_string(var_temp_qnt);
+				$$.label = generator_temp_code();
 				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
 			}
 			;
@@ -74,6 +80,12 @@ E 			: E '+' E
 #include "lex.yy.c"
 
 int yyparse();
+
+string generator_temp_code() 
+{
+	var_temp_qnt++;
+	return "t" + std::to_string(var_temp_qnt);
+}
 
 int main( int argc, char* argv[] )
 {

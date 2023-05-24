@@ -762,7 +762,7 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 #line 28 "lexica.l"
-{ return *yytext; }
+{ return *yytext; } 
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
