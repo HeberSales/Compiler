@@ -43,8 +43,14 @@ BLOCO		: '{' COMANDOS '}'
 			}
 			;
 
-COMANDOS	: COMANDO COMANDOS
+COMANDOS	: COMANDO COMANDOS 
+			{
+				$$.traducao = $1.traducao + $2.traducao;
+			}
 			|
+			{
+				$$.traducao = "";
+			}
 			;
 
 COMANDO 	: E ';'
