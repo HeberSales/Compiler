@@ -12,6 +12,7 @@ struct atributos
 {
 	string label;
 	string traducao;
+	string tipo;
 };
 
 typedef struct
@@ -77,6 +78,8 @@ COMANDO 	: E ';'
 
 E 			: E '+' E
 			{
+				cout << $1.tipo << endl;
+				cout << $3.tipo << endl;
 				$$.label = generator_temp_code();
 				$$.traducao = $1.traducao + $3.traducao + 
 					"\t" + $$.label + " = " + $1.label + " + " + $3.label + ";\n";
@@ -94,6 +97,7 @@ E 			: E '+' E
 			}
 			| TK_NUM
 			{
+				$$.tipo = "int";
 				$$.label = generator_temp_code();
 				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
 			}
@@ -111,8 +115,10 @@ E 			: E '+' E
 				if (!encontrei) {
 					yyerror("Você não declarou a variavel");
 				}
+
+				$$.tipo = variavel.tipoVariavel;
 				$$.label = generator_temp_code();
-				$$.traducao = "\t" + variavel.tipoVariavel + " " + $$.label + " = " + $1.label + ";\n";
+				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
 			}
 			;
 

@@ -1424,7 +1424,7 @@ yyreduce:
 				bool encontrei = false;
 				TIPO_SIMBOLO variavel;
 				for (int i = 0; i < tabelaSimbolos.size(); i++){
-					if(tabelaSimbolos[i].nomeVariavel.compare(yyvsp[0].label)) {
+					if(tabelaSimbolos[i].nomeVariavel == yyvsp[0].label) {
 						variavel = tabelaSimbolos[i];
 						encontrei = true;
 					}
