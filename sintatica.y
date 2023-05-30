@@ -64,7 +64,14 @@ COMANDOS	: COMANDO COMANDOS
 COMANDO 	: E ';' 
 			| TK_TIPO_INT TK_ID ';'
 			{
+				TIPO_SIMBOLO valor;
+				valor.nomeVariavel = $2.label;
+				valor.tipoVariavel = "int";
 
+				tabelaSimbolos.push_back(valor);
+
+				$$.traducao = "";
+				$$.label = "";
 			}
 			;
 
@@ -92,8 +99,20 @@ E 			: E '+' E
 			}
 			| TK_ID
 			{
+				bool encontrei = false;
+				TIPO_SIMBOLO variavel;
+				for (int i = 0; i < tabelaSimbolos.size(); i++){
+					if(tabelaSimbolos[i].nomeVariavel.compare($1.label)) {
+						variavel = tabelaSimbolos[i];
+						encontrei = true;
+					}
+				}
+
+				if (!encontrei) {
+					yyerror("Você não declarou a variavel");
+				}
 				$$.label = generator_temp_code();
-				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
+				$$.traducao = "\t" + variavel.tipoVariavel + " " + $$.label + " = " + $1.label + ";\n";
 			}
 			;
 
@@ -111,15 +130,6 @@ string generator_temp_code()
 
 int main( int argc, char* argv[] )
 {
-	TIPO_SIMBOLO valor;
-	valor.nomeVariavel = "score";
-	valor.tipoVariavel = "int";
-	cout << valor.nomeVariavel << endl;
-
-	tabelaSimbolos.push_back(valor);
-	cout << tabelaSimbolos.size() << endl;
-	cout << tabelaSimbolos[0].nomeVariavel << endl;
-
 	var_temp_qnt = 0;
 
 	yyparse();

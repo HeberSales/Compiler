@@ -535,8 +535,8 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    42,    42,    48,    54,    59,    64,    65,    71,    78,
-      84,    88,    93
+       0,    42,    42,    48,    54,    59,    64,    65,    78,    85,
+      91,    95,   100
 };
 #endif
 
@@ -1369,59 +1369,78 @@ yyreduce:
   case 7:
 #line 66 "sintatica.y"
                         {
+				TIPO_SIMBOLO valor;
+				valor.nomeVariavel = yyvsp[-1].label;
+				valor.tipoVariavel = "int";
 
+				tabelaSimbolos.push_back(valor);
+
+				yyval.traducao = "";
+				yyval.label = "";
 			}
-#line 1375 "y.tab.c"
+#line 1382 "y.tab.c"
     break;
 
   case 8:
-#line 72 "sintatica.y"
+#line 79 "sintatica.y"
                         {
 				yyval.label = generator_temp_code();
 				yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + 
 					"\t" + yyval.label + " = " + yyvsp[-2].label + " + " + yyvsp[0].label + ";\n";
 			}
-#line 1385 "y.tab.c"
+#line 1392 "y.tab.c"
     break;
 
   case 9:
-#line 79 "sintatica.y"
+#line 86 "sintatica.y"
                         {
 				yyval.label = generator_temp_code();
 				yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + 
 					"\t" + yyval.label + " = " + yyvsp[-2].label + " - " + yyvsp[0].label + ";\n";
 			}
-#line 1395 "y.tab.c"
+#line 1402 "y.tab.c"
     break;
 
   case 10:
-#line 85 "sintatica.y"
+#line 92 "sintatica.y"
                         {
 				yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + yyvsp[-2].label + " = " + yyvsp[0].label + ";\n";
 			}
-#line 1403 "y.tab.c"
+#line 1410 "y.tab.c"
     break;
 
   case 11:
-#line 89 "sintatica.y"
+#line 96 "sintatica.y"
                         {
 				yyval.label = generator_temp_code();
 				yyval.traducao = "\t" + yyval.label + " = " + yyvsp[0].label + ";\n";
 			}
-#line 1412 "y.tab.c"
+#line 1419 "y.tab.c"
     break;
 
   case 12:
-#line 94 "sintatica.y"
+#line 101 "sintatica.y"
                         {
+				bool encontrei = false;
+				TIPO_SIMBOLO variavel;
+				for (int i = 0; i < tabelaSimbolos.size(); i++){
+					if(tabelaSimbolos[i].nomeVariavel.compare(yyvsp[0].label)) {
+						variavel = tabelaSimbolos[i];
+						encontrei = true;
+					}
+				}
+
+				if (!encontrei) {
+					yyerror("Você não declarou a variavel");
+				}
 				yyval.label = generator_temp_code();
-				yyval.traducao = "\t" + yyval.label + " = " + yyvsp[0].label + ";\n";
+				yyval.traducao = "\t" + variavel.tipoVariavel + " " + yyval.label + " = " + yyvsp[0].label + ";\n";
 			}
-#line 1421 "y.tab.c"
+#line 1440 "y.tab.c"
     break;
 
 
-#line 1425 "y.tab.c"
+#line 1444 "y.tab.c"
 
       default: break;
     }
@@ -1653,7 +1672,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 100 "sintatica.y"
+#line 119 "sintatica.y"
 
 
 #include "lex.yy.c"
@@ -1668,15 +1687,6 @@ string generator_temp_code()
 
 int main( int argc, char* argv[] )
 {
-	TIPO_SIMBOLO valor;
-	valor.nomeVariavel = "score";
-	valor.tipoVariavel = "int";
-	cout << valor.nomeVariavel << endl;
-
-	tabelaSimbolos.push_back(valor);
-	cout << tabelaSimbolos.size() << endl;
-	cout << tabelaSimbolos[0].nomeVariavel << endl;
-
 	var_temp_qnt = 0;
 
 	yyparse();
