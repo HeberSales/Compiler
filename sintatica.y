@@ -30,7 +30,7 @@ string generator_temp_code();
 %}
 
 %token TK_NUM
-%token TK_MAIN TK_ID TK_TIPO_INT
+%token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLOAT
 %token TK_FIM TK_ERROR 
 
 %start S
@@ -68,6 +68,17 @@ COMANDO 	: E ';'
 				TIPO_SIMBOLO valor;
 				valor.nomeVariavel = $2.label;
 				valor.tipoVariavel = "int";
+
+				tabelaSimbolos.push_back(valor);
+
+				$$.traducao = "";
+				$$.label = "";
+			}
+			| TK_TIPO_FLOAT TK_ID ';'
+			{
+				TIPO_SIMBOLO valor;
+				valor.nomeVariavel = $2.label;
+				valor.tipoVariavel = "float";
 
 				tabelaSimbolos.push_back(valor);
 
