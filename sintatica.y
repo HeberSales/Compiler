@@ -2,18 +2,26 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <vector>
 
 #define YYSTYPE atributos
 
 using namespace std;
-
-int var_temp_qnt;
 
 struct atributos
 {
 	string label;
 	string traducao;
 };
+
+typedef struct
+{
+	string nomeVariavel;
+	string tipoVariavel;
+} TIPO_SIMBOLO;
+
+int var_temp_qnt;
+vector<TIPO_SIMBOLO> tabelaSimbolos;
 
 int yylex(void);
 void yyerror(string);
@@ -33,7 +41,7 @@ string generator_temp_code();
 
 S 			: TK_TIPO_INT TK_MAIN '(' ')' BLOCO
 			{
-				cout << "/*Compilador FOCA*/\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nint main(void)\n{\n" << $5.traducao << "\treturn 0;\n}" << endl; 
+				cout << "/*Compilador BRABO*/\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nint main(void)\n{\n" << $5.traducao << "\treturn 0;\n}" << endl; 
 			}
 			;
 
@@ -53,7 +61,11 @@ COMANDOS	: COMANDO COMANDOS
 			}
 			;
 
-COMANDO 	: E ';'
+COMANDO 	: E ';' 
+			| TK_TIPO_INT TK_ID ';'
+			{
+
+			}
 			;
 
 E 			: E '+' E
@@ -99,6 +111,15 @@ string generator_temp_code()
 
 int main( int argc, char* argv[] )
 {
+	TIPO_SIMBOLO valor;
+	valor.nomeVariavel = "score";
+	valor.tipoVariavel = "int";
+	cout << valor.nomeVariavel << endl;
+
+	tabelaSimbolos.push_back(valor);
+	cout << tabelaSimbolos.size() << endl;
+	cout << tabelaSimbolos[0].nomeVariavel << endl;
+
 	var_temp_qnt = 0;
 
 	yyparse();
