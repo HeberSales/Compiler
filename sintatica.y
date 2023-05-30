@@ -102,7 +102,7 @@ E 			: E '+' E
 				bool encontrei = false;
 				TIPO_SIMBOLO variavel;
 				for (int i = 0; i < tabelaSimbolos.size(); i++){
-					if(tabelaSimbolos[i].nomeVariavel.compare($1.label)) {
+					if(tabelaSimbolos[i].nomeVariavel == $1.label) {
 						variavel = tabelaSimbolos[i];
 						encontrei = true;
 					}
