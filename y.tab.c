@@ -1919,7 +1919,7 @@ yyreduce:
 					yyval.label = generator_temp_code();
 					addTemp(yyval.label, "int");
 					yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + 
-					yyval.label + " = (int) " + yyvsp[0].label + ";\n" + "\t" + 
+					yyval.label + " = (float) " + yyvsp[0].label + ";\n" + "\t" + 
 					variavel.labelVariavel + " = " + yyval.label + ";\n";
 				}
 				else if (variavel.tipoVariavel == "float" & yyvsp[0].tipo == "int")
