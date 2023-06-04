@@ -442,7 +442,7 @@ E 			: E '+' E
 					$$.label = generator_temp_code();
 					addTemp($$.label, "int");
 					$$.traducao = $1.traducao + $3.traducao + "\t" + 
-					$$.label + " = (float) " + $3.label + ";\n" + "\t" + 
+					$$.label + " = (int) " + $3.label + ";\n" + "\t" + 
 					variavel.labelVariavel + " = " + $$.label + ";\n";
 				}
 				else if (variavel.tipoVariavel == "float" & $3.tipo == "int")
