@@ -50,22 +50,50 @@ extern int yydebug;
   enum yytokentype
   {
     TK_NUM = 258,
-    TK_MAIN = 259,
-    TK_ID = 260,
-    TK_TIPO_INT = 261,
-    TK_TIPO_FLOAT = 262,
-    TK_FIM = 263,
-    TK_ERROR = 264
+    TK_REAL = 259,
+    TK_CHAR = 260,
+    TK_MAIN = 261,
+    TK_ID = 262,
+    TK_TIPO_INT = 263,
+    TK_TIPO_FLOAT = 264,
+    TK_TIPO_BOOLEAN = 265,
+    TK_TIPO_CHAR = 266,
+    TK_TRUE = 267,
+    TK_FALSE = 268,
+    TK_MAIOR_IGUAL = 269,
+    TK_MENOR_IGUAL = 270,
+    TK_IGUAL_IGUAL = 271,
+    TK_DIFERENTE = 272,
+    TK_MAIS_MAIS = 273,
+    TK_MENOS_MENOS = 274,
+    TK_OU = 275,
+    TK_E = 276,
+    TK_FIM = 277,
+    TK_ERROR = 278
   };
 #endif
 /* Tokens.  */
 #define TK_NUM 258
-#define TK_MAIN 259
-#define TK_ID 260
-#define TK_TIPO_INT 261
-#define TK_TIPO_FLOAT 262
-#define TK_FIM 263
-#define TK_ERROR 264
+#define TK_REAL 259
+#define TK_CHAR 260
+#define TK_MAIN 261
+#define TK_ID 262
+#define TK_TIPO_INT 263
+#define TK_TIPO_FLOAT 264
+#define TK_TIPO_BOOLEAN 265
+#define TK_TIPO_CHAR 266
+#define TK_TRUE 267
+#define TK_FALSE 268
+#define TK_MAIOR_IGUAL 269
+#define TK_MENOR_IGUAL 270
+#define TK_IGUAL_IGUAL 271
+#define TK_DIFERENTE 272
+#define TK_MAIS_MAIS 273
+#define TK_MENOS_MENOS 274
+#define TK_OU 275
+#define TK_E 276
+#define TK_FIM 277
+#define TK_ERROR 278
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

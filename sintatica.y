@@ -13,30 +13,48 @@ struct atributos
 	string label;
 	string traducao;
 	string tipo;
+	string valor;
 };
 
 typedef struct
 {
 	string nomeVariavel;
 	string tipoVariavel;
+	string labelVariavel;
 } TIPO_SIMBOLO;
 
+typedef struct
+{
+	string tipoVariavel;
+	string labelVariavel;
+} TIPO_TEMP;
+
+
 int var_temp_qnt;
+
 vector<TIPO_SIMBOLO> tabelaSimbolos;
+vector<TIPO_TEMP> tabelaTemp;
+string atribuicaoVariavel;
 
 int yylex(void);
 void yyerror(string);
 string generator_temp_code();
+void verificaVarRepetida(string variavel);
+void verificaVarExistente(string nomeVariavel);
+TIPO_SIMBOLO getSimbolo(string variavel);
+void addSimbolo(string variavel, string tipo, string label);
+void addTemp(string label, string tipo);
+void verificarOperacaoRelacional(string tipo_1, string tipo_2);
 %}
 
-%token TK_NUM
-%token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLOAT
+%token TK_NUM TK_REAL TK_CHAR
+%token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLOAT TK_TIPO_BOOLEAN TK_TIPO_CHAR TK_TRUE TK_FALSE
+%token TK_MAIOR_IGUAL TK_MENOR_IGUAL TK_IGUAL_IGUAL TK_DIFERENTE TK_MAIS_MAIS TK_MENOS_MENOS TK_OU TK_E
 %token TK_FIM TK_ERROR 
 
 %start S
 
 %left '+'
-%left '-'
 
 %%
 
@@ -65,22 +83,32 @@ COMANDOS	: COMANDO COMANDOS
 COMANDO 	: E ';' 
 			| TK_TIPO_INT TK_ID ';'
 			{
-				TIPO_SIMBOLO valor;
-				valor.nomeVariavel = $2.label;
-				valor.tipoVariavel = "int";
-
-				tabelaSimbolos.push_back(valor);
+				verificaVarRepetida($2.label);
+				addSimbolo($2.label, "int", generator_temp_code());
 
 				$$.traducao = "";
 				$$.label = "";
 			}
 			| TK_TIPO_FLOAT TK_ID ';'
 			{
-				TIPO_SIMBOLO valor;
-				valor.nomeVariavel = $2.label;
-				valor.tipoVariavel = "float";
+				verificaVarRepetida($2.label);
+				addSimbolo($2.label, "int", generator_temp_code());
 
-				tabelaSimbolos.push_back(valor);
+				$$.traducao = "";
+				$$.label = "";
+			}
+			| TK_TIPO_BOOLEAN TK_ID ';'
+			{
+				verificaVarRepetida($2.label);
+				addSimbolo($2.label, "boolean", generator_temp_code());
+
+				$$.traducao = "";
+				$$.label = "";
+			}
+			| TK_TIPO_CHAR TK_ID ';'
+			{
+				verificaVarRepetida($2.label);
+				addSimbolo($2.label, "char", generator_temp_code());
 
 				$$.traducao = "";
 				$$.label = "";
@@ -89,47 +117,405 @@ COMANDO 	: E ';'
 
 E 			: E '+' E
 			{
-				cout << $1.tipo << endl;
-				cout << $3.tipo << endl;
 				$$.label = generator_temp_code();
-				$$.traducao = $1.traducao + $3.traducao + 
-					"\t" + $$.label + " = " + $1.label + " + " + $3.label + ";\n";
+				string tipoAux;
+				string labelAux;
+
+				if($1.tipo == $3.tipo){
+					$$.tipo = $1.tipo;
+					$$.traducao = $1.traducao + $3.traducao + "\t" + 
+					$$.label + " = " + $1.label + " + " + $3.label + ";\n";
+					addTemp($$.label, $$.tipo);
+				}
+				else if($1.tipo == "int" & $3.tipo == "float"){
+					$$.tipo = $3.tipo;
+					addTemp($$.label, $$.tipo);
+					$$.traducao = $1.traducao + $3.traducao + "\t" + 
+					$$.label + " = (float) " + $1.label + ";\n";
+
+					labelAux = $$.label;
+					$$.label = generator_temp_code();
+					addTemp($$.label, $$.tipo);
+					$$.traducao = $$.traducao + "\t"+
+					$$.label + " = " + labelAux + " + " + $3.label + ";\n";
+				}
+				else if($1.tipo == "float" & $3.tipo == "int"){
+					$$.tipo = $1.tipo;
+					addTemp($$.label, $$.tipo);
+					$$.traducao = $1.traducao + $3.traducao + "\t" + 
+					$$.label + " = (float) " + $3.label + ";\n";
+					labelAux = $$.label;
+					$$.label = generator_temp_code();
+
+					addTemp($$.label, $$.tipo);
+					$$.traducao = $$.traducao + "\t"+
+					$$.label + " = " + $1.label + " + " + labelAux + ";\n";
+				}
+				else{
+					yyerror("Operação inválida");
+				}
 			}
-			|
-			E '-' E
+			| E '-' E
 			{
 				$$.label = generator_temp_code();
-				$$.traducao = $1.traducao + $3.traducao + 
-					"\t" + $$.label + " = " + $1.label + " - " + $3.label + ";\n";
+				string tipoAux;
+				string labelAux;
+				if($1.tipo == $3.tipo){
+					tipoAux = $1.tipo;
+					$$.traducao = $1.traducao + $3.traducao + "\t" + 
+					$$.label + " = " + $1.label + " - " + $3.label + ";\n";
+					addTemp($$.label, tipoAux);
+				}
+				else if($1.tipo == "int" & $3.tipo == "float"){
+					tipoAux = "float";
+					addTemp($$.label, tipoAux);
+					$$.traducao = $1.traducao + $3.traducao + "\t" + 
+					$$.label + " = (float) " + $1.label + ";\n";
+
+					labelAux = $$.label;
+					$$.label = generator_temp_code();
+					addTemp($$.label, tipoAux);
+					$$.traducao = $$.traducao + "\t"+
+					$$.label + " = " + labelAux + " - " + $3.label + ";\n";
+				}
+				else if($1.tipo == "float" & $3.tipo == "int"){
+					tipoAux = "float";
+					addTemp($$.label, tipoAux);
+					$$.traducao = $1.traducao + $3.traducao + "\t" + 
+					$$.label + " = (float) " + $3.label + ";\n";
+
+					labelAux = $$.label;
+					$$.label = generator_temp_code();
+					addTemp($$.label, tipoAux);
+					$$.traducao = $$.traducao + "\t"+
+					$$.label + " = " + $1.label + " - " + labelAux + ";\n";
+				}
+				else{
+					yyerror("Operação inválida");
+				}
+			}
+			| E '*' E 
+			{
+				$$.label = generator_temp_code();
+				string tipoAux;
+				string labelAux;
+				if($1.tipo == $3.tipo){
+					$$.tipo = $1.tipo;
+					$$.traducao = $1.traducao + $3.traducao + "\t" + 
+					$$.label + " = " + $1.label + " * " + $3.label + ";\n";
+					addTemp($$.label, $$.tipo);
+				}
+				else if($1.tipo == "int" & $3.tipo == "float"){
+					$$.tipo = $3.tipo;
+					addTemp($$.label, $$.tipo);
+					$$.traducao = $1.traducao + $3.traducao + "\t" + 
+					$$.label + " = (float) " + $1.label + ";\n";
+					labelAux = $$.label;
+
+					$$.label = generator_temp_code();
+					addTemp($$.label, $$.tipo);
+					$$.traducao = $$.traducao + "\t"+
+					$$.label + " = " + labelAux + " * " + $3.label + ";\n";
+				}
+				else if($1.tipo == "float" & $3.tipo == "int"){
+					$$.tipo = $1.tipo;
+					addTemp($$.label, $$.tipo);
+					$$.traducao = $1.traducao + $3.traducao + "\t" + 
+					$$.label + " = (float) " + $3.label + ";\n";
+
+					labelAux = $$.label;
+					$$.label = generator_temp_code();
+					addTemp($$.label, $$.tipo);
+					$$.traducao = $$.traducao + "\t"+
+					$$.label + " = " + $1.label + " * " + labelAux + ";\n";
+				}
+				else{
+					yyerror("Operação inválida");
+				}
+			}
+			| E '/' E
+			{
+				$$.label = generator_temp_code();
+				string tipoAux;
+				string labelAux;
+
+				string aux = $3.valor;
+				int count = 0;
+				int ponto = 0;
+
+				for(int i = 0; i < aux.size(); i++) {
+					if(aux[i] == '.')
+					{
+						ponto = 1;
+					}
+					if(aux[i] == '0')
+					{
+						count++;
+					}
+				}
+
+				if(count == aux.size() || (count + ponto) == aux.size()){
+					yyerror("Divisão por 0, Operação inválida!");
+				}
+
+				if($1.tipo == $3.tipo){
+					tipoAux = $1.tipo;
+					$$.traducao = $1.traducao + $3.traducao + "\t" + 
+					$$.label + " = " + $1.label + " / " + $3.label + ";\n";
+					addTemp($$.label, tipoAux);
+				}
+				else if($1.tipo == "int" & $3.tipo == "float"){
+					tipoAux = "float";
+					addTemp($$.label, tipoAux);
+					$$.traducao = $1.traducao + $3.traducao + "\t" + 
+					$$.label + " = (float) " + $1.label + ";\n";
+					labelAux = $$.label;
+					$$.label = generator_temp_code();
+					addTemp($$.label, tipoAux);
+					$$.traducao = $$.traducao + "\t"+
+					$$.label + " = " + labelAux + " / " + $3.label + ";\n";
+				}
+				else if($1.tipo == "float" & $3.tipo == "int"){
+					tipoAux = "float";
+					addTemp($$.label, tipoAux);
+					$$.traducao = $1.traducao + $3.traducao + "\t" + 
+					$$.label + " = (float) " + $3.label + ";\n";
+					labelAux = $$.label;
+					$$.label = generator_temp_code();
+					addTemp($$.label, tipoAux);
+					$$.traducao = $$.traducao + "\t"+
+					$$.label + " = " + $1.label + " / " + labelAux + ";\n";
+				}
+				else{
+					yyerror("Operação inválida");
+				}
+			}
+			| E '%' E
+			{
+				$$.label = generator_temp_code();
+				string tipoAux;
+				string labelAux;
+
+				if($1.tipo == "int" & $3.tipo == "int"){
+					tipoAux = $1.tipo;
+					$$.traducao = $1.traducao + $3.traducao + "\t" + 
+					$$.label + " = " + $1.label + " % " + $3.label + ";\n";
+					addTemp($$.label, tipoAux);
+				}
+
+				else{
+					yyerror("Operandos inválidos (float)");
+				}
+			}
+			| E '>' E 
+			{
+				verificarOperacaoRelacional($1.tipo, $3.tipo);
+				$$.label = generator_temp_code();
+
+				addTemp($$.label, "boolean");
+				$$.traducao = $1.traducao + $3.traducao + "\t" + 
+				$$.label + " = " + $1.label + " > " + $3.label + ";\n";
+			}
+			| E '<' E
+			{
+				verificarOperacaoRelacional($1.tipo, $3.tipo);
+				$$.label = generator_temp_code();
+
+				addTemp($$.label, "boolean");
+				$$.traducao = $1.traducao + $3.traducao + "\t" + 
+				$$.label + " = " + $1.label + " < " + $3.label + ";\n";
+
+			}
+			| E TK_DIFERENTE E
+			{
+				verificarOperacaoRelacional($1.tipo, $3.tipo);
+				$$.label = generator_temp_code();
+
+				addTemp($$.label, "boolean");
+				$$.traducao = $1.traducao + $3.traducao + "\t" + 
+				$$.label + " = " + $1.label + " != " + $3.label + ";\n";
+			}
+			| E TK_MAIOR_IGUAL E
+			{
+				verificarOperacaoRelacional($1.tipo, $3.tipo);
+				$$.label = generator_temp_code();
+
+				addTemp($$.label, "boolean");
+				$$.traducao = $1.traducao + $3.traducao + "\t" + 
+				$$.label + " = " + $1.label + " >= " + $3.label + ";\n";
+			}
+			| E TK_MENOR_IGUAL E
+			{
+				verificarOperacaoRelacional($1.tipo, $3.tipo);
+				$$.label = generator_temp_code();
+
+				addTemp($$.label, "boolean");
+				$$.traducao = $1.traducao + $3.traducao + "\t" + 
+				$$.label + " = " + $1.label + " <= " + $3.label + ";\n";
+			}
+			| E TK_IGUAL_IGUAL E
+			{
+				verificarOperacaoRelacional($1.tipo, $3.tipo);
+				$$.label = generator_temp_code();
+
+				addTemp($$.label, "boolean");
+				$$.traducao = $1.traducao + $3.traducao + "\t" + 
+				$$.label + " = " + $1.label + " == " + $3.label + ";\n";
+			}
+			| E TK_OU E
+			{
+				$$.label = generator_temp_code();
+				addTemp($$.label, "boolean");
+				$$.traducao = $1.traducao + $3.traducao + "\t" + 
+				$$.label + " = " + $1.label + " || " + $3.label + ";\n";
+			}
+			| E TK_E E
+			{
+				$$.label = generator_temp_code();
+				addTemp($$.label, "boolean");
+				$$.traducao = $1.traducao + $3.traducao + "\t" + 
+				$$.label + " = " + $1.label + " && " + $3.label + ";\n";
+			}
+			| '!' E
+			{
+				$$.label = generator_temp_code();
+				addTemp($$.label, "boolean");
+				$$.traducao = $2.traducao + "\t" + 
+				$$.label + " = " + "!" + $2.label + ";\n";
+			}
+			| TK_ID TK_MAIS_MAIS
+			{
+				verificaVarExistente($1.label);
+				TIPO_SIMBOLO variavel_1 = getSimbolo($1.label);
+
+				$$.traducao = $1.traducao + $2.traducao + "\t" + 
+				variavel_1.labelVariavel + " = " + variavel_1.labelVariavel + " + 1" + ";\n";
+			}
+			| TK_ID TK_MENOS_MENOS
+			{
+				verificaVarExistente($1.label);
+				TIPO_SIMBOLO variavel_1 = getSimbolo($1.label);
+
+				$$.traducao = $1.traducao + $2.traducao + "\t" + 
+				variavel_1.labelVariavel + " = " + variavel_1.labelVariavel + " - 1" + ";\n";
+			}
+			|TK_TIPO_FLOAT '(' E ')'
+			{
+				$$.label = generator_temp_code();
+				$$.tipo  = "float";
+				addTemp($$.label, $$.tipo);
+				
+				if($3.tipo == "int")
+				{	
+					$$.traducao = $3.traducao + "\t" + 
+					$$.label + " = " + "(float) " + $3.label + ";\n";  
+				}else
+				{
+					yyerror("Operacao invalida");
+				}
+			}
+			|TK_TIPO_INT '(' E ')'
+			{
+				$$.label = generator_temp_code();
+				$$.tipo  = "int";
+				addTemp($$.label, $$.tipo);
+				if($3.tipo == "float")
+				{
+					$$.traducao = $3.traducao + "\t" + 
+					$$.label + " = " + "(int) " + $3.label + ";\n";
+				}else
+				{
+					yyerror("Operacao invalida");
+				}
 			}
 			| TK_ID '=' E 
 			{
-				$$.traducao = $1.traducao + $3.traducao + "\t" + $1.label + " = " + $3.label + ";\n";
+				verificaVarExistente($1.label);
+				TIPO_SIMBOLO variavel = getSimbolo($1.label);
+
+				if(variavel.tipoVariavel == $3.tipo){
+					$$.traducao = $1.traducao + $3.traducao + "\t" + 
+				    variavel.labelVariavel + " = " + $3.label + ";\n";
+				}
+				else if (variavel.tipoVariavel == "int" & $3.tipo == "float")
+				{
+					$$.label = generator_temp_code();
+					addTemp($$.label, "int");
+					$$.traducao = $1.traducao + $3.traducao + "\t" + 
+					$$.label + " = (int) " + $3.label + ";\n" + "\t" + 
+					variavel.labelVariavel + " = " + $$.label + ";\n";
+				}
+				else if (variavel.tipoVariavel == "float" & $3.tipo == "int")
+				{
+					$$.label = generator_temp_code();
+					addTemp($$.label, "float");
+					$$.traducao = $1.traducao + $3.traducao + "\t" + 
+					$$.label + " = (float) " + $3.label + ";\n" + "\t" + 
+					variavel.labelVariavel + " = " + $$.label + ";\n";
+				}
+				else{
+					yyerror("Atribuição inválida");
+				}
 			}
 			| TK_NUM
 			{
 				$$.tipo = "int";
 				$$.label = generator_temp_code();
+
+				addTemp($$.label, $$.tipo);
 				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
+				$$.valor = $1.label;
+			}
+			| TK_REAL
+			{
+				$$.tipo = "float";
+				$$.label = generator_temp_code();
+				addTemp($$.label, $$.tipo);
+				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
+				$$.valor = $1.label;
+			}
+			| TK_CHAR
+			{
+				$$.tipo = "char";
+				$$.label = generator_temp_code();
+				addTemp($$.label, $$.tipo);
+				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
+			}
+			| TK_ID '=' TK_TRUE
+			{
+			    verificaVarExistente($1.label);
+				TIPO_SIMBOLO variavel_1 = getSimbolo($1.label);
+				$$.traducao = $1.traducao + $2.traducao + "\t" + 
+				variavel_1.labelVariavel + " = 1"  + ";\n";
+			}
+			| TK_ID '=' TK_FALSE
+			{
+				verificaVarExistente($1.label);
+				TIPO_SIMBOLO variavel_1 = getSimbolo($1.label);
+				$$.traducao = $1.traducao + $2.traducao + "\t" + 
+				variavel_1.labelVariavel + " = 0"  + ";\n";
 			}
 			| TK_ID
 			{
 				bool encontrei = false;
-				TIPO_SIMBOLO variavel;
-				for (int i = 0; i < tabelaSimbolos.size(); i++){
-					if(tabelaSimbolos[i].nomeVariavel == $1.label) {
+				TIPO_SIMBOLO variavel = getSimbolo($1.label);
+
+				for(int i = 0; i < tabelaSimbolos.size(); i++){
+					if(tabelaSimbolos[i].nomeVariavel == $1.label)
+					{
 						variavel = tabelaSimbolos[i];
 						encontrei = true;
-					}
+					}	
 				}
 
-				if (!encontrei) {
-					yyerror("Você não declarou a variavel");
+				if(!encontrei)
+				{
+					yyerror("ERROR: a variavel '" + $1.label + "' não foi declarada");
 				}
 
 				$$.tipo = variavel.tipoVariavel;
-				$$.label = generator_temp_code();
-				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
+				$$.label = variavel.labelVariavel;
+				$$.traducao = "";
 			}
 			;
 
@@ -143,6 +529,62 @@ string generator_temp_code()
 {
 	var_temp_qnt++;
 	return "t" + std::to_string(var_temp_qnt);
+}
+
+void verificarOperacaoRelacional(string tipo_1, string tipo_2){
+	if(tipo_1 == "char" || tipo_2 == "char" || tipo_1 == "boolean" || tipo_2 == "boolean" || tipo_1 == "boolean" || tipo_2 == "char" || tipo_1 == "char" ||tipo_2 == "boolean")
+	{
+		yyerror ("Operação inválida (Relacional)");
+	}
+}
+
+void verificaVarRepetida(string variavel){
+	for(int i = 0; i < tabelaSimbolos.size(); i++)
+	{
+		if(tabelaSimbolos[i].nomeVariavel == variavel)
+		{
+			yyerror("Variável existente");
+		}
+	}
+}
+
+void verificaVarExistente(string nomeVariavel){
+	bool result = false;
+	for (int i = 0; i < tabelaSimbolos.size(); i++){
+		if(tabelaSimbolos[i].nomeVariavel == nomeVariavel){
+			result = true;
+		}
+	}
+	
+	if(!result)	{
+		yyerror("ERROR: a variavel '" + nomeVariavel + "' não foi declarada");
+	}
+}
+
+TIPO_SIMBOLO getSimbolo(string variavel){
+	for (int i = 0; i < tabelaSimbolos.size(); i++)
+	{
+		if(tabelaSimbolos[i].nomeVariavel == variavel){
+			return tabelaSimbolos[i];
+		}					
+	}
+}
+
+void addTemp(string label, string tipo){
+	TIPO_TEMP valor;
+	valor.labelVariavel = label;
+	valor.tipoVariavel = tipo;
+	tabelaTemp.push_back(valor);
+	atribuicaoVariavel = atribuicaoVariavel + "\t" + valor.tipoVariavel + " " + valor.labelVariavel +";\n";
+}
+
+void addSimbolo(string variavel, string tipo, string label){
+	TIPO_SIMBOLO valor;
+	valor.nomeVariavel = variavel;
+	valor.tipoVariavel = tipo;
+	valor.labelVariavel = label;
+	tabelaSimbolos.push_back(valor);
+	atribuicaoVariavel = atribuicaoVariavel + "\t" + valor.tipoVariavel + " " + valor.labelVariavel +";\n";
 }
 
 int main( int argc, char* argv[] )
