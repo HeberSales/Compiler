@@ -92,7 +92,7 @@ COMANDO 	: E ';'
 			| TK_TIPO_FLOAT TK_ID ';'
 			{
 				verificaVarRepetida($2.label);
-				addSimbolo($2.label, "int", generator_temp_code());
+				addSimbolo($2.label, "float", generator_temp_code());
 
 				$$.traducao = "";
 				$$.label = "";
