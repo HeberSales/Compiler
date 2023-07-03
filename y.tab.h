@@ -94,6 +94,14 @@ extern int yydebug;
 #define TK_E 276
 #define TK_FIM 277
 #define TK_ERROR 278
+#define TK_IF = 279
+#define TK_ELSE = 280
+#define TK_WHILE = 281
+#define TK_FOR = 282
+#define TK_DO = 283
+#define TK_SWITCH = 284
+#define TK_CASE = 285
+
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
