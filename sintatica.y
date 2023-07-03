@@ -51,6 +51,7 @@ void verificarOperacaoRelacional(string tipo_1, string tipo_2);
 %token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLOAT TK_TIPO_BOOLEAN TK_TIPO_CHAR TK_TRUE TK_FALSE
 %token TK_MAIOR_IGUAL TK_MENOR_IGUAL TK_IGUAL_IGUAL TK_DIFERENTE TK_MAIS_MAIS TK_MENOS_MENOS TK_OU TK_E
 %token TK_FIM TK_ERROR 
+%token TK_IF TK_ELSE TK_WHILE TK_FOR TK_DO TK_SWITCH
 
 %start S
 
@@ -112,6 +113,24 @@ COMANDO 	: E ';'
 
 				$$.traducao = "";
 				$$.label = "";
+			}
+			| TK_IF '(' E ')' E ';' COMANDOS
+			{
+				verificarAtributoRelacional($3);
+				$$.label = gentempcode();
+
+				if(controleFunction > 0){
+					traducaoFunction = traducaoFunction + "\t" + "int" + " " + $$.label +";\n";
+				} else {
+					atribuicaoVariavel = atribuicaoVariavel + "\t" + "int" + " " + $$.label +";\n";
+				}
+
+				string cond = genCondcode();
+
+				$$.traducao = $3.traducao + "\t" 
+				+ $$.label + " = !" + $3.label + ";\n" + "\t"
+				"if(" + $$.label + ") goto "+ cond + "\n" + 
+				$5.traducao + "\t" + cond + "\n" + $7.traducao;
 			}
 			;
 
