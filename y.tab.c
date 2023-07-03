@@ -114,6 +114,8 @@ TIPO_SIMBOLO getSimbolo(string variavel);
 void addSimbolo(string variavel, string tipo, string label);
 void addTemp(string label, string tipo);
 void verificarOperacaoRelacional(string tipo_1, string tipo_2);
+void verificarAtributoRelacional(atributos tipo_1);
+
 
 #line 119 "y.tab.c"
 
