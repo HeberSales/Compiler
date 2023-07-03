@@ -132,6 +132,71 @@ COMANDO 	: E ';'
 				"if(" + $$.label + ") goto "+ cond + "\n" + 
 				$5.traducao + "\t" + cond + "\n" + $7.traducao;
 			}
+			| TK_IF '(' E ')' E ';' TK_ELSE E ';' COMANDOS
+			{
+				verificarAtributoRelacional($3);
+				$$.label = gentempcode();
+				if(controleFunction > 0){
+					traducaoFunction = traducaoFunction + "\t" + "int" + " " + $$.label +";\n";
+				} else {
+					atribuicaoVariavel = atribuicaoVariavel + "\t" + "int" + " " + $$.label +";\n";
+				}
+				string cond = genCondcode();
+
+				$$.traducao = $3.traducao + "\t" 
+				+ $$.label + " = !" + $3.label + ";\n" + "\t"
+				"if(" + $$.label + ") goto ELSE;" + "\n" + 
+				$5.traducao + "\tgoto " + cond + "\n" + "\tELSE:\n" + $8.traducao
+				+ "\t" + cond +"\n" + $10.traducao;
+			}
+			| TK_WHILE '(' E ')' BLOCO COMANDOS
+			{
+				verificarAtributoRelacional($3);
+				$$.label = gentempcode();
+				atribuicaoVariavel = atribuicaoVariavel + "\t" + "int" + " " + $$.label +";\n";
+				TIPO_LOOP loop = getLace($1.label);
+
+				$$.traducao = loop.inicioLaco + $3.traducao + "\t" + $$.label + " = !" +
+				$3.label + ";\n" + "\tIF(" + $$.label + ") goto " + loop.fimLaco + "\n" +
+				$5.traducao + "\tgoto " + loop.inicioLaco + "\n\t" + loop.fimLaco + "\n" + $6.traducao;
+			}
+			| TK_DO BLOCO TK_WHILE '(' E ')' ';' COMANDOS
+			{
+				verificarAtributoRelacional($5);
+				$$.label = gentempcode();
+				atribuicaoVariavel = atribuicaoVariavel + "\t" + "int" + " " + $$.label +";\n";
+				TIPO_LOOP loop = getLace($1.label);
+
+				$$.traducao = loop.inicioLaco + $2.traducao + $5.traducao + "\t" 
+				+ $$.label + " = !" + $5.label + ";\n" + "\tIF(" + $$.label +") goto " 
+				+ loop.fimLaco  + "\n" + "\tgoto " + loop.inicioLaco + "\n\t" + loop.fimLaco +" \n"+ $8.traducao;
+			}
+			| TK_FOR '(' ';' ';' ')' BLOCO COMANDOS
+			{
+				$$.label = gentempcode();
+				atribuicaoVariavel = atribuicaoVariavel + "\t" + "int" + " " + $$.label +";\n";
+				TIPO_LOOP loop = getLace($1.label); 
+
+				$$.traducao = loop.inicioLaco + $6.traducao + "\t" + "goto " + loop.inicioLaco + "\n\t" + loop.fimLaco +"\n" + $7.traducao;
+			}
+			| TK_FOR '(' ATRIBUICAO ';' RELACIONAL ';' E ')' BLOCO COMANDOS
+			{
+				$$.label = gentempcode();
+				atribuicaoVariavel = atribuicaoVariavel + "\t" + "int" + " " + $$.label +";\n";
+				string lace = genLacecode();
+				string cond = genCondcode();
+
+				$$.traducao = $3.traducao + lace + $5.traducao + "\t" + $$.label + 
+				" = !" + $5.label + ";\n\t" + "if(" + $$.label + ") goto "+ cond + "\n" + 
+				$9.traducao + $7.traducao + "\tgoto " + lace + "\n\t"+ cond +"\n" + $10.traducao;
+			}
+			| TK_SWITCH '(' P ')' '{' CASES '}' COMANDOS
+			{
+				$$.traducao = $3.traducao + $6.traducao + $8.traducao;
+			}
+			{
+				$$.traducao = "";
+			}
 			;
 
 E 			: E '+' E
