@@ -29,6 +29,14 @@ ID {LETRA}({LETRA}|{NUM})*
 
 "true"      { return TK_TRUE; }
 "false"     { return TK_FALSE; }
+"if"        { return TK_IF; }
+"else"      { return TK_ELSE; }
+"while"     { yylval.label = genLaceNameCode(); pushLoop("while"); return TK_WHILE; }
+"for"       { yylval.label = genLaceNameCode(); pushLoop("for"); return TK_FOR; }
+"do"        { yylval.label = genLaceNameCode(); pushLoop("do");  return TK_DO; }
+"switch"    { yylval.label = genLaceNameCode(); pushLoop("switch"); return TK_SWITCH; }
+
+
 
 ">="		{ return TK_MAIOR_IGUAL; }
 "<="        { return TK_MENOR_IGUAL; }
