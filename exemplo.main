@@ -1,9 +1,22 @@
-int main()
-{
-	float a;
-	int b;
-	float c;
-	a = 1.5;
-	b = 3;
-	c = a + b;
+function int soma(int a, int b){
+    return a + b;
+}
+
+int main(){
+   int result;
+   int test;
+   int n;
+   int p;
+   p = 2;
+   n = 5;
+   test = 10;
+   result = soma(10, 20);
+
+   while(test != 0){
+	test = test - 1;
+   }
+   
+   if(n == 5 || p > 1){
+	n = n + 1;
+   }
 }
