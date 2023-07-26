@@ -1,16 +1,20 @@
-function int soma(int a, int b){
+function int somar(int a, int b){
     return a + b;
 }
 
 int main(){
    int result;
    int test;
+   int tamo;
+   tamo = 99;
    int n;
    int p;
+   int i;
+   i = 0;
    p = 2;
    n = 5;
    test = 10;
-   result = soma(10, 20);
+   result = somar(10, 20);
 
    while(test != 0){
 	test = test - 1;
@@ -19,7 +23,7 @@ int main(){
    if(n == 5 || p > 1){
 	n = n + 1;
    }
-   
-   
-   aa(2);
+   scan(tamo);
+   print("ata");
+
 }
