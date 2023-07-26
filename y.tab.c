@@ -1548,7 +1548,7 @@ yyreduce:
 #line 122 "sintatica.y"
                         {
 				if(error == "")
-					cout << "\n/*Compilador SDDSEAD*/\n\n" + warning + "\n"<< "#include <iostream>\n#include<string.h>\n#include<stdio.h>\n\n" + atribuicaoVariavelGlobais + "\n" + traducaoFunction  + "\nint main(void)\n{\n" <<  atribuicaoVariavel + "\n" + yyvsp[0].traducao << "\treturn 0;\n}" << endl;
+					cout << "\n/*COMPILADOR BRABO*/\n\n" + warning + "\n"<< "#include <iostream>\n#include<string.h>\n#include<stdio.h>\n\n" + atribuicaoVariavelGlobais + "\n" + traducaoFunction  + "\nint main(void)\n{\n" <<  atribuicaoVariavel + "\n" + yyvsp[0].traducao << "\treturn 0;\n}" << endl;
 				else{
 					cout << "\n" + warning + "\n";
 					yyerror(error);
@@ -1588,11 +1588,11 @@ yyreduce:
 				tabelaFunction[size].nomeFunction = yyvsp[-4].label;
 
 				if((function.retornoLabel == "") && (yyvsp[-4].tipo != "void"))
-					error += "\033[1;31merror\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Função não apresenta um retorno.\n";
+					error += "error - Linha " + contLinha +  ": Função não apresenta um retorno.\n";
 				else if((function.retornoLabel != "") && (yyvsp[-4].tipo == "void"))
-					error += "\033[1;31merror\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Função void não poder conter um retorno.\n";
+					error += "error - Linha " + contLinha +  ": Função void não poder conter um retorno.\n";
 				else if(yyvsp[-4].tipo != function.retornoTipo && (yyvsp[-4].tipo != "void"))
-					error += "\033[1;31merror\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Tipo de return não condiz com o tipo da função.\n";
+					error += "error - Linha " + contLinha +  ": Tipo de return não condiz com o tipo da função.\n";
 
 				traducaoFunction += yyvsp[0].traducao + "\tEndFunc" + ";\n\n";
 			}
@@ -1607,7 +1607,7 @@ yyreduce:
 			   {
 				   if(yyvsp[0].label == tabelaFunction[i].nomeFunction)
 				   {
-						error += "\033[1;31merror\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Nome de função já existe.\n";
+						error += "error - Linha " + contLinha +  ": Nome de função já existe.\n";
 				   }
 			   }
 
@@ -1904,7 +1904,7 @@ yyreduce:
                         {
 				if(controleLoop == 0)
 				{
-					error += "\033[1;31merror\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Break não existente em um loop.\n";
+					error += "error - Linha " + contLinha +  ": Break não existente em um loop.\n";
 				} else {
 					TIPO_LOOP loop = getLaceBreak();
 					yyval.traducao = "\tgoto " + loop.fimLaco + "\n";
@@ -1917,7 +1917,7 @@ yyreduce:
 #line 385 "sintatica.y"
                         {
 				if(controleLoop == 0){
-					error += "\033[1;31merror\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Continue não existente em um loop.\n";
+					error += "error - Linha " + contLinha +  ": Continue não existente em um loop.\n";
 				} else {
 					TIPO_LOOP loop = getLaceBreak();
 					yyval.traducao = "\tgoto " + loop.inicioLaco + "\n";
@@ -1930,7 +1930,7 @@ yyreduce:
 #line 394 "sintatica.y"
                         {
 				if(controleFunction == 0){
-					error += "\033[1;31merror\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Return não está dentro de uma função.\n";
+					error += "error - Linha " + contLinha +  ": Return não está dentro de uma função.\n";
 				}
 				
 				int size = tabelaFunction.size() - 1;
@@ -1945,7 +1945,7 @@ yyreduce:
 #line 407 "sintatica.y"
                         {
 				if(yyvsp[-1].tipo == "void")
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Void não é um tipo declarável.\n";
+					error += "Error - Linha " + contLinha +  ": Void não é um tipo declarável.\n";
 
 				if(yyvsp[-1].tipo != "string"){
 					int indiceTopo = tabelaFunction.size() - 1;
@@ -1965,7 +1965,7 @@ yyreduce:
 							{
 								if(tabelaFunction[indiceTopo].parameters[i].nomeVariavel == yyvsp[0].label)
 								{
-									error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Nome do parâmetro '" + yyvsp[0].label + "' ja utilizado na função.\n";
+									error += "Error - Linha " + contLinha +  ": Nome do parâmetro '" + yyvsp[0].label + "' ja utilizado na função.\n";
 								}	
 							}
 							tabelaFunction[indiceTopo].parameters.push_back(simb);
@@ -1980,7 +1980,7 @@ yyreduce:
 							{ 
 								if(tabelaFunction[indiceTopo].parameters[i].nomeVariavel == yyvsp[0].label)
 								{
-									error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Váriavel '" + yyvsp[0].label + "' não poderá ser de declarada nesta função.\n";
+									error += "Error - Linha " + contLinha +  ": Váriavel '" + yyvsp[0].label + "' não poderá ser de declarada nesta função.\n";
 								}	
 							}
 						}
@@ -2006,7 +2006,7 @@ yyreduce:
 							{ 
 								if(tabelaFunction[indiceTopo].parameters[i].nomeVariavel == yyvsp[0].label)
 								{
-									error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Nome do parâmetro '" + yyvsp[0].label + "' ja utilizado na função.\n";
+									error += "Error - Linha " + contLinha +  ": Nome do parâmetro '" + yyvsp[0].label + "' ja utilizado na função.\n";
 								}	
 							}
 							tabelaFunction[indiceTopo].parameters.push_back(simb);
@@ -2019,7 +2019,7 @@ yyreduce:
 							{ 
 								if(tabelaFunction[indiceTopo].parameters[i].nomeVariavel == yyvsp[0].label)
 								{
-									error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Váriavel '" + yyvsp[0].label + "' não poderá ser de declarada nesta função.\n";
+									error += "Error - Linha " + contLinha +  ": Váriavel '" + yyvsp[0].label + "' não poderá ser de declarada nesta função.\n";
 								}	
 							}
 						}
@@ -2094,7 +2094,7 @@ yyreduce:
 				cout << yyvsp[-2].tipo;
 
 				if(yyvsp[-2].tipo == "string" && yyvsp[0].tipo == "string"){
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Concatenação de string em breve.\n";
+					error += "Error - Linha " + contLinha +  ": Concatenação de string em breve.\n";
 				}
 
 				if(yyvsp[-2].tipo == yyvsp[0].tipo){
@@ -2128,7 +2128,7 @@ yyreduce:
 					yyval.label + " = " + yyvsp[-2].label + " + " + labelAux + ";\n";
 				}
 				else{
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Operandos com tipos inválidos.\n";
+					error += "Error - Linha " + contLinha +  ": Operandos com tipos inválidos.\n";
 				}
 			}
 #line 2135 "y.tab.c"
@@ -2172,7 +2172,7 @@ yyreduce:
 					yyval.label + " = " + yyvsp[-2].label + " - " + labelAux + ";\n";
 				}
 				else{
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Operandos com tipos inválidos.\n";
+					error += "Error - Linha " + contLinha +  ": Operandos com tipos inválidos.\n";
 				}
 			}
 #line 2179 "y.tab.c"
@@ -2183,7 +2183,7 @@ yyreduce:
                         {
 				TIPO_SIMBOLO variavel_1 = getSimbolo(yyvsp[-1].label);
 				if(variavel_1.tipoVariavel == "char" || variavel_1.tipoVariavel == "string" || variavel_1.tipoVariavel == "boolean" || variavel_1.tipoVariavel == "float"){
-					error += "\033[1;31merror\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Tipo inválido para operação unária.\n";
+					error += "error - Linha " + contLinha +  ": Tipo inválido para operação unária.\n";
 				}
 				yyval.traducao = yyvsp[-1].traducao + yyvsp[0].traducao + "\t" + 
 				variavel_1.labelVariavel + " = " + variavel_1.labelVariavel + " + 1" + ";\n";
@@ -2196,7 +2196,7 @@ yyreduce:
                         {
 				TIPO_SIMBOLO variavel_1 = getSimbolo(yyvsp[-1].label);
 				if(variavel_1.tipoVariavel == "char" || variavel_1.tipoVariavel == "string" || variavel_1.tipoVariavel == "boolean" || variavel_1.tipoVariavel == "float"){
-					error += "\033[1;31merror\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Tipo inválido para operação unária.\n";
+					error += "error - Linha " + contLinha +  ": Tipo inválido para operação unária.\n";
 				}
 				yyval.traducao = yyvsp[-1].traducao + yyvsp[0].traducao + "\t" + 
 				variavel_1.labelVariavel + " = " + variavel_1.labelVariavel + " - 1" + ";\n";
@@ -2220,11 +2220,11 @@ yyreduce:
 				{
 					yyval.traducao = yyvsp[-1].traducao + "\t" + 
 					yyval.label + " = " + "(float) " + yyvsp[-1].label + ";\n";
-					warning += "\033[1;33mWarning\033[0m - Linha " + contLinha +  ": as variáveis já apresentam o mesmo tipo.\n";
+					warning += "Warning - Linha " + contLinha +  ": as variáveis já apresentam o mesmo tipo.\n";
 				}
 				else
 				{
-					error += "\n\033[1;31mError\033[0m - Linha " + contLinha +  ": Casting inválido";
+					error += "\nError - Linha " + contLinha +  ": Casting inválido";
 				}
 			}
 #line 2231 "y.tab.c"
@@ -2244,9 +2244,9 @@ yyreduce:
 				} else if (yyvsp[-1].tipo == "int"){
 					yyval.traducao = yyvsp[-1].traducao + "\t" + 
 					yyval.label + " = " + "(int) " + yyvsp[-1].label + ";\n";
-					warning += "\033[1;33mWarning\033[0m - Linha " + contLinha +  ": as variáveis já apresentam o mesmo tipo.\n";
+					warning += "Warning - Linha " + contLinha +  ": as variáveis já apresentam o mesmo tipo.\n";
 				}else{
-					error += "\033[1;31mError\033[0m - Linha " + contLinha +  ": Casting inválido\n";
+					error += "Error - Linha " + contLinha +  ": Casting inválido\n";
 				}
 			}
 #line 2253 "y.tab.c"
@@ -2283,13 +2283,13 @@ yyreduce:
 				}
 
 				if(aux.parameters.size() != parametersChamada.size())
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Quantidade de parâmetros inválida.\n";
+					error += "Error - Linha " + contLinha +  ": Quantidade de parâmetros inválida.\n";
 				else{
 					for(int i = 0; i < aux.parameters.size(); i++)
 					{
 						if(aux.parameters[i].tipoVariavel != parametersChamada[j].tipoVariavel)
 						{
-							error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m O parâmetro da função '" + aux.parameters[i].nomeVariavel + "' recebe tipo diferente.\n";
+							error += "Error - Linha " + contLinha +  ": O parâmetro da função '" + aux.parameters[i].nomeVariavel + "' recebe tipo diferente.\n";
 						} else {
 							tabelaFunction[index].parameters[i].valorVariavel = parametersChamada[j].labelVariavel;
 							params += "\tparam " + parametersChamada[j].labelVariavel + ";\n";
@@ -2520,7 +2520,7 @@ yyreduce:
 							traducaoFunction += traduzir + '\n';
 				}
 				else{
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Atribuição inválida, tipos diferentes.\n";
+					error += "Error - Linha " + contLinha +  ": Atribuição inválida, tipos diferentes.\n";
 				}
 			}
 #line 2527 "y.tab.c"
@@ -2564,7 +2564,7 @@ yyreduce:
 					yyval.label + " = " + yyvsp[-2].label + " * " + labelAux + ";\n";
 				}
 				else{
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Operandos com tipos inválidos.\n";
+					error += "Error - Linha " + contLinha +  ": Operandos com tipos inválidos.\n";
 				}
 			}
 #line 2571 "y.tab.c"
@@ -2608,7 +2608,7 @@ yyreduce:
 					yyval.label + " = " + yyvsp[-2].label + " / " + labelAux + ";\n";
 				}
 				else{
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Operandos com tipos inválidos.\n";
+					error += "Error - Linha " + contLinha +  ": Operandos com tipos inválidos.\n";
 				}
 
 				string aux = yyvsp[0].valor;
@@ -2628,7 +2628,7 @@ yyreduce:
 				}
 
 				if(cont == aux.size() || (cont + ponto) == aux.size()){
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Operação inválida, divisão por 0.\n";
+					error += "Error - Linha " + contLinha +  ": Operação inválida, divisão por 0.\n";
 				}
 			}
 #line 2635 "y.tab.c"
@@ -2648,7 +2648,7 @@ yyreduce:
 					addTemp(yyval.label, tipoAux);
 				}
 				else{
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Operandos inválidos para %, (ou presença de float).\n";
+					error += "Error - Linha " + contLinha +  ": Operandos inválidos para %, (ou presença de float).\n";
 				}
 			}
 #line 2655 "y.tab.c"
@@ -3002,7 +3002,7 @@ void verificarVariavelRepetida(string variavel){
 	{
 		if(tabelaSimbolos[i].nomeVariavel == variavel)
 		{
-			error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m A variável '" + variavel + "' já existe.\n";
+			error += "Error - Linha " + contLinha +  ": A variável '" + variavel + "' já existe.\n";
 		}
 	}
 }
@@ -3044,7 +3044,7 @@ TIPO_SIMBOLO getSimbolo(string variavel){
 		
 	}
 
-	error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m A variável '" + variavel + "' não foi instanciada.\n";
+	error += "Error - Linha " + contLinha +  ": A variável '" + variavel + "' não foi instanciada.\n";
 }
 
 void addSimbolo(string variavel, string tipo, string label){
@@ -3155,14 +3155,14 @@ int getSize(string str){
 void verificarOperacaoRelacional(atributos tipo_1, atributos tipo_2){
 	if((tipo_1.tipo == "char" || tipo_2.tipo == "char") || (tipo_1.tipo == "string" || tipo_2.tipo == "string"))
 	{
-		error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Operação relacional inválida.\n";
+		error += "Error - Linha " + contLinha +  ": Operação relacional inválida.\n";
 	}
 }
 
 void verificarAtributoRelacional(atributos tipo_1){
 	if(tipo_1.tipo == "char" || tipo_1.tipo == "string" || tipo_1.tipo == "void")
 	{
-		error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Operação relacional inválida.\n";
+		error += "Error - Linha " + contLinha +  ": Operação relacional inválida.\n";
 	}
 }
 
@@ -3258,7 +3258,7 @@ TIPO_FUNCTION getFunctionChamada(string nome){
 	}
 
 	if(achou == 0)
-		error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Nome da função não existe.\n";
+		error += "Error - Linha " + contLinha +  ": Nome da função inexistente.\n";
 	return aux;
 }
 

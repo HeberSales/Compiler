@@ -121,7 +121,7 @@ void verificarAtributoRelacional(atributos tipo_1);
 S 			: TK_TIPO_INT TK_MAIN '(' ')' BLOCO
 			{
 				if(error == "")
-					cout << "\n/*Compilador SDDSEAD*/\n\n" + warning + "\n"<< "#include <iostream>\n#include<string.h>\n#include<stdio.h>\n\n" + atribuicaoVariavelGlobais + "\n" + traducaoFunction  + "\nint main(void)\n{\n" <<  atribuicaoVariavel + "\n" + $5.traducao << "\treturn 0;\n}" << endl;
+					cout << "\n/*COMPILADOR BRABO*/\n\n" + warning + "\n"<< "#include <iostream>\n#include<string.h>\n#include<stdio.h>\n\n" + atribuicaoVariavelGlobais + "\n" + traducaoFunction  + "\nint main(void)\n{\n" <<  atribuicaoVariavel + "\n" + $5.traducao << "\treturn 0;\n}" << endl;
 				else{
 					cout << "\n" + warning + "\n";
 					yyerror(error);
@@ -147,11 +147,11 @@ FUNSSAO     : DECLAFUNC '(' PARAMETERS ')' BLOCO
 				tabelaFunction[size].nomeFunction = $1.label;
 
 				if((function.retornoLabel == "") && ($1.tipo != "void"))
-					error += "\033[1;31merror\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Função não apresenta um retorno.\n";
+					error += "error - Linha " + contLinha +  ": Função não apresenta um retorno.\n";
 				else if((function.retornoLabel != "") && ($1.tipo == "void"))
-					error += "\033[1;31merror\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Função void não poder conter um retorno.\n";
+					error += "error - Linha " + contLinha +  ": Função void não poder conter um retorno.\n";
 				else if($1.tipo != function.retornoTipo && ($1.tipo != "void"))
-					error += "\033[1;31merror\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Tipo de return não condiz com o tipo da função.\n";
+					error += "error - Linha " + contLinha +  ": Tipo de return não condiz com o tipo da função.\n";
 
 				traducaoFunction += $5.traducao + "\tEndFunc" + ";\n\n";
 			}
@@ -164,7 +164,7 @@ DECLAFUNC  : TK_FUNCTION TIPOS TK_ID
 			   {
 				   if($3.label == tabelaFunction[i].nomeFunction)
 				   {
-						error += "\033[1;31merror\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Nome de função já existe.\n";
+						error += "error - Linha " + contLinha +  ": Nome de função já existe.\n";
 				   }
 			   }
 
@@ -375,7 +375,7 @@ COMANDO 	: E ';'
 			{
 				if(controleLoop == 0)
 				{
-					error += "\033[1;31merror\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Break não existente em um loop.\n";
+					error += "error - Linha " + contLinha +  ": Break não existente em um loop.\n";
 				} else {
 					TIPO_LOOP loop = getLaceBreak();
 					$$.traducao = "\tgoto " + loop.fimLaco + "\n";
@@ -384,7 +384,7 @@ COMANDO 	: E ';'
 			| TK_CONTINUE ';'
 			{
 				if(controleLoop == 0){
-					error += "\033[1;31merror\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Continue não existente em um loop.\n";
+					error += "error - Linha " + contLinha +  ": Continue não existente em um loop.\n";
 				} else {
 					TIPO_LOOP loop = getLaceBreak();
 					$$.traducao = "\tgoto " + loop.inicioLaco + "\n";
@@ -393,7 +393,7 @@ COMANDO 	: E ';'
 			| TK_RETURN E ';'
 			{
 				if(controleFunction == 0){
-					error += "\033[1;31merror\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Return não está dentro de uma função.\n";
+					error += "error - Linha " + contLinha +  ": Return não está dentro de uma função.\n";
 				}
 				
 				int size = tabelaFunction.size() - 1;
@@ -406,7 +406,7 @@ COMANDO 	: E ';'
 DECLARACAO  : TIPOS TK_ID
 			{
 				if($1.tipo == "void")
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Void não é um tipo declarável.\n";
+					error += "Error - Linha " + contLinha +  ": Void não é um tipo declarável.\n";
 
 				if($1.tipo != "string"){
 					int indiceTopo = tabelaFunction.size() - 1;
@@ -426,7 +426,7 @@ DECLARACAO  : TIPOS TK_ID
 							{
 								if(tabelaFunction[indiceTopo].parameters[i].nomeVariavel == $2.label)
 								{
-									error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Nome do parâmetro '" + $2.label + "' ja utilizado na função.\n";
+									error += "Error - Linha " + contLinha +  ": Nome do parâmetro '" + $2.label + "' ja utilizado na função.\n";
 								}	
 							}
 							tabelaFunction[indiceTopo].parameters.push_back(simb);
@@ -441,7 +441,7 @@ DECLARACAO  : TIPOS TK_ID
 							{ 
 								if(tabelaFunction[indiceTopo].parameters[i].nomeVariavel == $2.label)
 								{
-									error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Váriavel '" + $2.label + "' não poderá ser de declarada nesta função.\n";
+									error += "Error - Linha " + contLinha +  ": Váriavel '" + $2.label + "' não poderá ser de declarada nesta função.\n";
 								}	
 							}
 						}
@@ -467,7 +467,7 @@ DECLARACAO  : TIPOS TK_ID
 							{ 
 								if(tabelaFunction[indiceTopo].parameters[i].nomeVariavel == $2.label)
 								{
-									error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Nome do parâmetro '" + $2.label + "' ja utilizado na função.\n";
+									error += "Error - Linha " + contLinha +  ": Nome do parâmetro '" + $2.label + "' ja utilizado na função.\n";
 								}	
 							}
 							tabelaFunction[indiceTopo].parameters.push_back(simb);
@@ -480,7 +480,7 @@ DECLARACAO  : TIPOS TK_ID
 							{ 
 								if(tabelaFunction[indiceTopo].parameters[i].nomeVariavel == $2.label)
 								{
-									error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Váriavel '" + $2.label + "' não poderá ser de declarada nesta função.\n";
+									error += "Error - Linha " + contLinha +  ": Váriavel '" + $2.label + "' não poderá ser de declarada nesta função.\n";
 								}	
 							}
 						}
@@ -531,7 +531,7 @@ E 			: M '+' E
 				cout << $1.tipo;
 
 				if($1.tipo == "string" && $3.tipo == "string"){
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Concatenação de string em breve.\n";
+					error += "Error - Linha " + contLinha +  ": Concatenação de string em breve.\n";
 				}
 
 				if($1.tipo == $3.tipo){
@@ -565,7 +565,7 @@ E 			: M '+' E
 					$$.label + " = " + $1.label + " + " + labelAux + ";\n";
 				}
 				else{
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Operandos com tipos inválidos.\n";
+					error += "Error - Linha " + contLinha +  ": Operandos com tipos inválidos.\n";
 				}
 			}
 			| M '-' E
@@ -605,14 +605,14 @@ E 			: M '+' E
 					$$.label + " = " + $1.label + " - " + labelAux + ";\n";
 				}
 				else{
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Operandos com tipos inválidos.\n";
+					error += "Error - Linha " + contLinha +  ": Operandos com tipos inválidos.\n";
 				}
 			}
 			| TK_ID TK_MAIS_MAIS
 			{
 				TIPO_SIMBOLO variavel_1 = getSimbolo($1.label);
 				if(variavel_1.tipoVariavel == "char" || variavel_1.tipoVariavel == "string" || variavel_1.tipoVariavel == "boolean" || variavel_1.tipoVariavel == "float"){
-					error += "\033[1;31merror\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Tipo inválido para operação unária.\n";
+					error += "error - Linha " + contLinha +  ": Tipo inválido para operação unária.\n";
 				}
 				$$.traducao = $1.traducao + $2.traducao + "\t" + 
 				variavel_1.labelVariavel + " = " + variavel_1.labelVariavel + " + 1" + ";\n";
@@ -621,7 +621,7 @@ E 			: M '+' E
 			{
 				TIPO_SIMBOLO variavel_1 = getSimbolo($1.label);
 				if(variavel_1.tipoVariavel == "char" || variavel_1.tipoVariavel == "string" || variavel_1.tipoVariavel == "boolean" || variavel_1.tipoVariavel == "float"){
-					error += "\033[1;31merror\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Tipo inválido para operação unária.\n";
+					error += "error - Linha " + contLinha +  ": Tipo inválido para operação unária.\n";
 				}
 				$$.traducao = $1.traducao + $2.traducao + "\t" + 
 				variavel_1.labelVariavel + " = " + variavel_1.labelVariavel + " - 1" + ";\n";
@@ -641,11 +641,11 @@ E 			: M '+' E
 				{
 					$$.traducao = $3.traducao + "\t" + 
 					$$.label + " = " + "(float) " + $3.label + ";\n";
-					warning += "\033[1;33mWarning\033[0m - Linha " + contLinha +  ": as variáveis já apresentam o mesmo tipo.\n";
+					warning += "Warning - Linha " + contLinha +  ": as variáveis já apresentam o mesmo tipo.\n";
 				}
 				else
 				{
-					error += "\n\033[1;31mError\033[0m - Linha " + contLinha +  ": Casting inválido";
+					error += "\nError - Linha " + contLinha +  ": Casting inválido";
 				}
 			}
 			| TK_TIPO_INT '(' E ')'
@@ -661,9 +661,9 @@ E 			: M '+' E
 				} else if ($3.tipo == "int"){
 					$$.traducao = $3.traducao + "\t" + 
 					$$.label + " = " + "(int) " + $3.label + ";\n";
-					warning += "\033[1;33mWarning\033[0m - Linha " + contLinha +  ": as variáveis já apresentam o mesmo tipo.\n";
+					warning += "Warning - Linha " + contLinha +  ": as variáveis já apresentam o mesmo tipo.\n";
 				}else{
-					error += "\033[1;31mError\033[0m - Linha " + contLinha +  ": Casting inválido\n";
+					error += "Error - Linha " + contLinha +  ": Casting inválido\n";
 				}
 			}
 			| RELACIONAL
@@ -688,13 +688,13 @@ E 			: M '+' E
 				}
 
 				if(aux.parameters.size() != parametersChamada.size())
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Quantidade de parâmetros inválida.\n";
+					error += "Error - Linha " + contLinha +  ": Quantidade de parâmetros inválida.\n";
 				else{
 					for(int i = 0; i < aux.parameters.size(); i++)
 					{
 						if(aux.parameters[i].tipoVariavel != parametersChamada[j].tipoVariavel)
 						{
-							error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m O parâmetro da função '" + aux.parameters[i].nomeVariavel + "' recebe tipo diferente.\n";
+							error += "Error - Linha " + contLinha +  ": O parâmetro da função '" + aux.parameters[i].nomeVariavel + "' recebe tipo diferente.\n";
 						} else {
 							tabelaFunction[index].parameters[i].valorVariavel = parametersChamada[j].labelVariavel;
 							params += "\tparam " + parametersChamada[j].labelVariavel + ";\n";
@@ -873,7 +873,7 @@ ATRIBUICAO  : TK_ID '=' E
 							traducaoFunction += traduzir + '\n';
 				}
 				else{
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Atribuição inválida, tipos diferentes.\n";
+					error += "Error - Linha " + contLinha +  ": Atribuição inválida, tipos diferentes.\n";
 				}
 			}
 			;
@@ -915,7 +915,7 @@ M 			: M '*' P
 					$$.label + " = " + $1.label + " * " + labelAux + ";\n";
 				}
 				else{
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Operandos com tipos inválidos.\n";
+					error += "Error - Linha " + contLinha +  ": Operandos com tipos inválidos.\n";
 				}
 			}
 			| M '/' P
@@ -955,7 +955,7 @@ M 			: M '*' P
 					$$.label + " = " + $1.label + " / " + labelAux + ";\n";
 				}
 				else{
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Operandos com tipos inválidos.\n";
+					error += "Error - Linha " + contLinha +  ": Operandos com tipos inválidos.\n";
 				}
 
 				string aux = $3.valor;
@@ -975,7 +975,7 @@ M 			: M '*' P
 				}
 
 				if(cont == aux.size() || (cont + ponto) == aux.size()){
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Operação inválida, divisão por 0.\n";
+					error += "Error - Linha " + contLinha +  ": Operação inválida, divisão por 0.\n";
 				}
 			}
 			| M '%' P
@@ -991,7 +991,7 @@ M 			: M '*' P
 					addTemp($$.label, tipoAux);
 				}
 				else{
-					error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Operandos inválidos para %, (ou presença de float).\n";
+					error += "Error - Linha " + contLinha +  ": Operandos inválidos para %, (ou presença de float).\n";
 				}
 			}
 			| P
@@ -1106,7 +1106,7 @@ void verificarVariavelRepetida(string variavel){
 	{
 		if(tabelaSimbolos[i].nomeVariavel == variavel)
 		{
-			error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m A variável '" + variavel + "' já existe.\n";
+			error += "Error - Linha " + contLinha +  ": A variável '" + variavel + "' já existe.\n";
 		}
 	}
 }
@@ -1148,7 +1148,7 @@ TIPO_SIMBOLO getSimbolo(string variavel){
 		
 	}
 
-	error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m A variável '" + variavel + "' não foi instanciada.\n";
+	error += "Error - Linha " + contLinha +  ": A variável '" + variavel + "' não foi instanciada.\n";
 }
 
 void addSimbolo(string variavel, string tipo, string label){
@@ -1259,14 +1259,14 @@ int getSize(string str){
 void verificarOperacaoRelacional(atributos tipo_1, atributos tipo_2){
 	if((tipo_1.tipo == "char" || tipo_2.tipo == "char") || (tipo_1.tipo == "string" || tipo_2.tipo == "string"))
 	{
-		error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Operação relacional inválida.\n";
+		error += "Error - Linha " + contLinha +  ": Operação relacional inválida.\n";
 	}
 }
 
 void verificarAtributoRelacional(atributos tipo_1){
 	if(tipo_1.tipo == "char" || tipo_1.tipo == "string" || tipo_1.tipo == "void")
 	{
-		error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Operação relacional inválida.\n";
+		error += "Error - Linha " + contLinha +  ": Operação relacional inválida.\n";
 	}
 }
 
@@ -1362,7 +1362,7 @@ TIPO_FUNCTION getFunctionChamada(string nome){
 	}
 
 	if(achou == 0)
-		error += "\033[1;31mError\033[0m - \033[1;36mLinha " + contLinha +  ":\033[0m\033[1;39m Nome da função não existe.\n";
+		error += "Error - Linha " + contLinha +  ": Nome da função inexistente.\n";
 	return aux;
 }
 
