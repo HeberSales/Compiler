@@ -10,17 +10,21 @@ int main(){
    int result;
    int test;
    int tamo;
+
    tamo = 99;
    int n;
+   
    int p;
    int i;
    int b;
    float f;
    float fl;
+
    i = 0;
    p = 2;
    n = 5;
    test = 10;
+
    result = somar(10, 20);
 
    while(test != 0){
@@ -44,7 +48,7 @@ int main(){
    for (b = 1; b <= 5; b++){
       break;
    } 
-   
+
    f = 4.5;
    fl = 8.8;
    somarfloat(f, fl);
