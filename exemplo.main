@@ -2,6 +2,10 @@ function int somar(int a, int b){
     return a + b;
 }
 
+function float somarfloat(float a, float b){
+   return a + b;
+}
+
 int main(){
    int result;
    int test;
@@ -10,6 +14,9 @@ int main(){
    int n;
    int p;
    int i;
+   int b;
+   float f;
+   float fl;
    i = 0;
    p = 2;
    n = 5;
@@ -17,13 +24,28 @@ int main(){
    result = somar(10, 20);
 
    while(test != 0){
-	test = test - 1;
+	   test = test - 1;
    }
    
    if(n == 5 || p > 1){
-	n = n + 1;
+	   n = n + 1;
    }
+
    scan(tamo);
+   
    print("ata");
 
+   switch (p) {
+        case 2:
+            p = 3;
+            break;
+    }
+
+   for (b = 1; b <= 5; b++){
+      break;
+   } 
+   
+   f = 4.5;
+   fl = 8.8;
+   somarfloat(f, fl);
 }
